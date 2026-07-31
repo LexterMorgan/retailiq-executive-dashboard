@@ -3,14 +3,16 @@ import type {
   DashboardFilters,
   FilterOptions,
 } from "../types/dashboard";
+import { USE_STATIC_DATA } from "./config";
+import { filtersToKey } from "./filterKey";
+import {
+  fetchStaticDashboardData,
+  fetchStaticFilterOptions,
+} from "./staticData";
 
-function buildQuery(filters: DashboardFilters) {
-  const params = new URLSearchParams();
-  if (filters.year) params.set("year", String(filters.year));
-  if (filters.country) params.set("country", filters.country);
-  if (filters.category) params.set("category", filters.category);
-  const query = params.toString();
-  return query ? `?${query}` : "";
+function buildQuery(filters: DashboardFilters): string {
+  const key = filtersToKey(filters);
+  return key ? `?${key}` : "";
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -23,11 +25,17 @@ async function fetchJson<T>(url: string): Promise<T> {
 }
 
 export async function fetchFilterOptions(): Promise<FilterOptions> {
+  if (USE_STATIC_DATA) {
+    return fetchStaticFilterOptions();
+  }
   return fetchJson<FilterOptions>("/api/filters");
 }
 
 export async function fetchDashboardData(
   filters: DashboardFilters,
 ): Promise<DashboardData> {
+  if (USE_STATIC_DATA) {
+    return fetchStaticDashboardData(filters);
+  }
   return fetchJson<DashboardData>(`/api/dashboard${buildQuery(filters)}`);
 }

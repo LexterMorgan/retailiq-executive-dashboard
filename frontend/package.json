@@ -5,8 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:static": "VITE_USE_STATIC=true vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "build:static": "VITE_USE_STATIC=true tsc -b && vite build",
+    "build:pages": "VITE_USE_STATIC=true VITE_BASE_PATH=/retailiq-executive-dashboard/ tsc -b && vite build",
+    "preview": "vite preview",
+    "preview:static": "VITE_USE_STATIC=true vite preview"
   },
   "dependencies": {
     "react": "^18.3.1",
